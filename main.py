@@ -5,6 +5,7 @@ from view import LoginRegisterView
 from functions import LoginRegisterFunctions
 from shoes_list_frame import ShoesListFrame
 from employee_list_frame import EmployeeListFrame
+from supplier_list_frame import SupplierListFrame
 
 
 class MainApplication(tk.Tk):
@@ -87,9 +88,8 @@ class MainMenuFrame(tk.Frame):
 
     def show_employee_management(self):
         # Switch to the ShoesListFrame for shoes management
-        # Create a new window for ShoesListFrame
         employee_window = tk.Toplevel(self.master)
-        employee_window.title("Shoes Management")
+        employee_window.title("Employee Management")
         employee_window.geometry("800x600")
 
         # Create a new instance of ShoesListFrame in the new window
@@ -112,8 +112,13 @@ class MainMenuFrame(tk.Frame):
         pass
 
     def show_supplier_management(self):
-        # Implement functionality for supplier management screen (if needed)
-        pass
+        supplier_window = tk.Toplevel(self.master)
+        supplier_window.title("Supplier Management")
+        supplier_window.geometry("800x600")
+
+        # Create a new instance of ShoesListFrame in the new window
+        supplier_frame = SupplierListFrame(supplier_window)
+        supplier_frame.pack(fill="both", expand=True)
 
 
 if __name__ == "__main__":

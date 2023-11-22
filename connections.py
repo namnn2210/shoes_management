@@ -106,6 +106,33 @@ def insert_user(user):
         session.close()
 
 
+def insert_shoe(shoe):
+    session = get_connection()
+    try:
+        session.add(shoe)
+        session.commit()
+    finally:
+        session.close()
+
+
+def insert_employee(employee):
+    session = get_connection()
+    try:
+        session.add(employee)
+        session.commit()
+    finally:
+        session.close()
+
+
+def insert_supplier(supplier):
+    session = get_connection()
+    try:
+        session.add(supplier)
+        session.commit()
+    finally:
+        session.close()
+
+
 def get_user_by_username_password(username, password):
     session = get_connection()
     try:
@@ -135,20 +162,12 @@ def get_all_employees():
         session.close()
 
 
-def insert_shoe(shoe):
+def get_all_suppliers():
     session = get_connection()
     try:
-        session.add(shoe)
-        session.commit()
-    finally:
-        session.close()
-
-
-def insert_employee(employee):
-    session = get_connection()
-    try:
-        session.add(employee)
-        session.commit()
+        suppliers_data = session.query(
+            Supplier).where(Supplier.status == 1).all()
+        return suppliers_data
     finally:
         session.close()
 
@@ -190,6 +209,23 @@ def update_employee(employee_id, card_id, name, phone, address, dob, gender):
         session.close()
 
 
+def update_supplier(supplier_id, name, phone, email, address):
+    session = get_connection()
+    try:
+        # Get the shoe to edit from the database
+        employee_to_edit = session.query(
+            Supplier).filter_by(id=supplier_id).first()
+
+        # Update the shoe details with the edited values
+        employee_to_edit.name = name
+        employee_to_edit.phone = phone
+        employee_to_edit.address = address
+        employee_to_edit.email = email
+        session.commit()
+    finally:
+        session.close()
+
+
 def delete_shoe(shoe_id):
     session = get_connection()
     try:
@@ -213,6 +249,21 @@ def delete_employee(employee_id):
 
         # Update the shoe details with the edited values
         employee_to_edit.status = 0
+
+        session.commit()
+    finally:
+        session.close()
+
+
+def delete_supplier(supplier_id):
+    session = get_connection()
+    try:
+        # Get the shoe to edit from the database
+        supplier_to_edit = session.query(
+            Supplier).filter_by(id=supplier_id).first()
+
+        # Update the shoe details with the edited values
+        supplier_to_edit.status = 0
 
         session.commit()
     finally:
