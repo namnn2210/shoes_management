@@ -19,7 +19,7 @@ class SupplierListFrame(tk.Frame):
         self.suppliers_data = self.get_suppliers_data_from_db()
 
         self.tree = ttk.Treeview(self, columns=(
-            "ID", "Name", "Phone", "Email", "Address"), show="headings")
+            "ID", "Tên", "SĐT", "Email", "Địa chỉ"), show="headings")
 
         # Store the entry values as instance variables
         self.name_entry = None
@@ -29,22 +29,22 @@ class SupplierListFrame(tk.Frame):
 
         # Set the column headings
         self.tree.heading("ID", text="ID")
-        self.tree.heading("Name", text="Name")
-        self.tree.heading("Phone", text="Phone")
+        self.tree.heading("Tên", text="Tên")
+        self.tree.heading("SĐT", text="SĐT")
         self.tree.heading("Email", text="Email")
-        self.tree.heading("Address", text="Address")
+        self.tree.heading("Địa chỉ", text="Địa chỉ")
 
         # Set the column widths based on content
         self.tree.column("ID", width=50, anchor="center")
-        self.tree.column("Name", width=150, anchor="center")
-        self.tree.column("Phone", width=100, anchor="center")
+        self.tree.column("Tên", width=150, anchor="center")
+        self.tree.column("SĐT", width=100, anchor="center")
         self.tree.column("Email", width=50, anchor="center")
-        self.tree.column("Address", width=100, anchor="center")
+        self.tree.column("Địa chỉ", width=100, anchor="center")
 
         # Insert the supplier data into the Treeview
         for supplier in self.suppliers_data:
             self.tree.insert("", "end", values=(
-                supplier['id'], supplier['name'], supplier['phone'], supplier['email'], supplier['address']))
+                supplier['id'], supplier['ten'], supplier['sdt'], supplier['email'], supplier['diachi']))
 
         self.tree.pack(padx=20, pady=20, fill="both", expand=True)
 
@@ -80,20 +80,20 @@ class SupplierListFrame(tk.Frame):
         # Insert the search results into the Treeview
         for supplier in search_results:
             self.tree.insert("", "end", values=(
-                supplier['id'], supplier['name'], supplier['phone'], supplier['email'], supplier['address']))
+                supplier['id'], supplier['ten'], supplier['sdt'], supplier['email'], supplier['diachi']))
 
     def search_suppliers_by_name(self, keyword):
         # Retrieve supplier data from the database that matches the search keyword
         suppliers_data = []
         suppliers = get_all_suppliers()
         for supplier in suppliers:
-            if keyword.lower() in supplier.name.lower():
+            if keyword.lower() in supplier.ten.lower():
                 suppliers_data.append({
                     'id': supplier.id,
-                    'name': supplier.name,
-                    'phone': supplier.phone,
+                    'ten': supplier.ten,
+                    'sdt': supplier.sdt,
                     'email': supplier.email,
-                    'address': supplier.address,
+                    'diachi': supplier.diachi,
                 })
         return suppliers_data
 
@@ -114,7 +114,7 @@ class SupplierListFrame(tk.Frame):
         edit_window.geometry("400x300")
 
         # Create labels and entry fields for editing
-        labels = ["Name", "Phone", "Email", "Address"]
+        labels = ["Tên", "SĐT", "Email", "Địa chỉ"]
         entries = []
 
         for label in labels:
@@ -173,7 +173,7 @@ class SupplierListFrame(tk.Frame):
         add_supplier_window.geometry("400x300")
 
         # Create and arrange input fields for supplier attributes
-        labels = ["Name", "Phone", "Email", "Address"]
+        labels = ["Tên", "SĐT", "Email", "Địa chỉ"]
         entries = []
 
         for label in labels:
@@ -201,8 +201,8 @@ class SupplierListFrame(tk.Frame):
             email = self.email_entry.get()
             address = self.address_entry.get()
 
-            new_supplier = Supplier(name=name, phone=phone, email=email,
-                                    address=address)
+            new_supplier = Supplier(ten=name, sdt=phone, email=email,
+                                    diachi=address)
             insert_supplier(new_supplier)
             messagebox.showinfo("Result", "New supplier added")
             # Refresh the table data
@@ -220,10 +220,10 @@ class SupplierListFrame(tk.Frame):
         for supplier in suppliers:
             suppliers_data.append({
                 'id': supplier.id,
-                'name': supplier.name,
-                'phone': supplier.phone,
+                'ten': supplier.ten,
+                'sdt': supplier.sdt,
                 'email': supplier.email,
-                'address': supplier.address,
+                'diachi': supplier.diachi,
             })
         return suppliers_data
 
@@ -238,4 +238,4 @@ class SupplierListFrame(tk.Frame):
         # Insert the updated supplier data into the Treeview
         for supplier in self.suppliers_data:
             self.tree.insert("", "end", values=(
-                supplier['id'], supplier['name'], supplier['phone'], supplier['email'], supplier['address']))
+                supplier['id'], supplier['ten'], supplier['sdt'], supplier['email'], supplier['diachi']))

@@ -20,7 +20,7 @@ class EmployeeListFrame(tk.Frame):
         self.employees_data = self.get_employees_data_from_db()
 
         self.tree = ttk.Treeview(self, columns=(
-            "ID", "Card ID", "Name", "Phone", "Address", "DOB", "Gender"), show="headings")
+            "ID", "Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính"), show="headings")
 
         # Store the entry values as instance variables
         self.card_id_entry = None
@@ -32,30 +32,30 @@ class EmployeeListFrame(tk.Frame):
 
         # Set the column headings
         self.tree.heading("ID", text="ID")
-        self.tree.heading("Card ID", text="Card ID")
-        self.tree.heading("Name", text="Name")
-        self.tree.heading("Phone", text="Phone")
-        self.tree.heading("Address", text="Address")
-        self.tree.heading("DOB", text="DOB")
-        self.tree.heading("Gender", text="Gender")
+        self.tree.heading("Mã NV", text="Mã NV")
+        self.tree.heading("Tên", text="Tên")
+        self.tree.heading("SĐT", text="SĐT")
+        self.tree.heading("Địa chỉ", text="Địa chỉ")
+        self.tree.heading("Ngày sinh", text="Ngày sinh")
+        self.tree.heading("Giới tính", text="Giới tính")
 
         # Set the column widths based on content
         self.tree.column("ID", width=50, anchor="center")
-        self.tree.column("Card ID", width=50, anchor="center")
-        self.tree.column("Name", width=150, anchor="center")
-        self.tree.column("Phone", width=100, anchor="center")
-        self.tree.column("Address", width=50, anchor="center")
-        self.tree.column("DOB", width=100, anchor="center")
-        self.tree.column("Gender", width=100, anchor="center")
+        self.tree.column("Mã NV", width=50, anchor="center")
+        self.tree.column("Tên", width=150, anchor="center")
+        self.tree.column("SĐT", width=100, anchor="center")
+        self.tree.column("Địa chỉ", width=50, anchor="center")
+        self.tree.column("Ngày sinh", width=100, anchor="center")
+        self.tree.column("Giới tính", width=100, anchor="center")
 
         # Insert the shoe data into the Treeview
         for employee in self.employees_data:
-            if employee['gender'] == 1:
-                gender = 'Male'
+            if employee['gioitinh'] == 1:
+                gender = 'Nam'
             else:
-                gender = 'Female'
+                gender = 'Nữ'
             self.tree.insert("", "end", values=(
-                employee['id'], employee['card_id'], employee['name'], employee['phone'], employee['address'], employee['dob'], gender))
+                employee['id'], employee['manv'], employee['ten'], employee['sdt'], employee['diachi'], employee['ngaysinh'], gender))
 
         self.tree.pack(padx=20, pady=20, fill="both", expand=True)
 
@@ -63,18 +63,18 @@ class EmployeeListFrame(tk.Frame):
 
         # Add an "Add Shoe" button
         self.add_employee_button = tk.Button(
-            self, text="Add Employee", command=self.open_add_shoe_window)
+            self, text="Thêm nhân viên", command=self.open_add_shoe_window)
         self.add_employee_button.pack(pady=10)
 
         # Add a search box and button
-        self.search_label = tk.Label(self, text="Search by Name:")
+        self.search_label = tk.Label(self, text="Tìm theo tên:")
         self.search_label.pack(pady=10)
 
         self.search_entry = tk.Entry(self)
         self.search_entry.pack(pady=5)
 
         self.search_button = tk.Button(
-            self, text="Search", command=self.perform_search)
+            self, text="Tìm kiếm", command=self.perform_search)
         self.search_button.pack(pady=5)
 
     def perform_search(self):
@@ -90,27 +90,27 @@ class EmployeeListFrame(tk.Frame):
 
         # Insert the search results into the Treeview
         for employee in search_results:
-            if employee['gender'] == 1:
-                gender = 'Male'
+            if employee['gioitinh'] == 1:
+                gender = 'Nam'
             else:
-                gender = 'Female'
+                gender = 'Nữ'
             self.tree.insert("", "end", values=(
-                employee['id'], employee['card_id'], employee['name'], employee['phone'], employee['address'], employee['dob'], gender))
+                employee['id'], employee['manv'], employee['ten'], employee['sdt'], employee['diachi'], employee['ngaysinh'], gender))
 
     def search_shoes_by_name(self, keyword):
         # Retrieve shoe data from the database that matches the search keyword
         employees_data = []
         employees = get_all_employees()
         for employee in employees:
-            if keyword.lower() in employee.name.lower():
+            if keyword.lower() in employee.ten.lower():
                 employees_data.append({
                     'id': employee.id,
-                    'card_id': employee.card_id,
-                    'name': employee.name,
-                    'phone': employee.phone,
-                    'address': employee.address,
-                    'dob': employee.dob,
-                    'gender': employee.gender,
+                    'manv': employee.manv,
+                    'ten': employee.ten,
+                    'sdt': employee.sdt,
+                    'diachi': employee.diachi,
+                    'ngaysinh': employee.ngaysinh,
+                    'gioitinh': employee.gioitinh,
                 })
         return employees_data
 
@@ -127,11 +127,11 @@ class EmployeeListFrame(tk.Frame):
     def open_edit_shoe_window(self, shoe_data):
         # Create a new window for editing shoe details
         edit_window = Toplevel(self.master)
-        edit_window.title("Edit Shoe")
+        edit_window.title("Cập nhật nhân viên")
         edit_window.geometry("400x300")
 
         # Create labels and entry fields for editing
-        labels = ["Card ID", "Name", "Phone", "Address", "DOB", "Gender"]
+        labels = ["Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính"]
         entries = []
 
         for label in labels:
@@ -186,17 +186,17 @@ class EmployeeListFrame(tk.Frame):
     def open_add_shoe_window(self):
         # Create a new window for adding a new shoe
         add_shoe_window = Toplevel(self.master)
-        add_shoe_window.title("Add Employee")
+        add_shoe_window.title("Thêm nhân viên mới")
         add_shoe_window.geometry("400x300")
 
         # Create and arrange input fields for shoe attributes
-        labels = ["Card ID", "Name", "Phone", "Address", "DOB"]
+        labels = ["Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh"]
         entries = []
 
         for label in labels:
             label_entry = tk.Label(add_shoe_window, text=label + ":")
             label_entry.pack()
-            if label == "DOB":
+            if label == "Ngày sinh":
                 # Use DateEntry widget for Date of Birth
                 dob_entry = DateEntry(add_shoe_window)
                 dob_entry.pack()
@@ -206,10 +206,10 @@ class EmployeeListFrame(tk.Frame):
                 entry.pack()
                 entries.append(entry)
 
-        gender_label = tk.Label(add_shoe_window, text="Gender:")
+        gender_label = tk.Label(add_shoe_window, text="Giới tính:")
         gender_label.pack()
 
-        gender_values = {"Male": 0, "Female": 1}
+        gender_values = {"Nam": 1, "Nữ": 0}
         gender_combobox = ttk.Combobox(
             add_shoe_window, values=list(gender_values.keys()), state="readonly")
         gender_combobox.pack()
@@ -224,7 +224,7 @@ class EmployeeListFrame(tk.Frame):
 
         # Create a button to submit the new shoe data
         submit_button = tk.Button(
-            add_shoe_window, text="Submit", command=lambda: self.add_new_shoe(add_shoe_window))
+            add_shoe_window, text="Thêm", command=lambda: self.add_new_shoe(add_shoe_window))
         submit_button.pack()
 
     def add_new_shoe(self, add_shoe_window):
@@ -236,8 +236,8 @@ class EmployeeListFrame(tk.Frame):
             dob = self.dob_entry.get()
             gender = self.gender_entry
 
-            new_shoe = Employee(name=name, card_id=card_id, phone=phone,
-                                address=address, dob=dob, gender=gender)
+            new_shoe = Employee(ten=name, manv=card_id, sdt=phone,
+                                diachi=address, ngaysinh=dob, gioitinh=gender)
             insert_employee(new_shoe)
             messagebox.showinfo("Result", "New employee added")
             # Refresh the table data
@@ -255,12 +255,12 @@ class EmployeeListFrame(tk.Frame):
         for employee in employees:
             employees_data.append({
                 'id': employee.id,
-                'card_id': employee.card_id,
-                'name': employee.name,
-                'phone': employee.phone,
-                'address': employee.address,
-                'dob': employee.dob,
-                'gender': employee.gender,
+                'manv': employee.manv,
+                'ten': employee.ten,
+                'sdt': employee.sdt,
+                'diachi': employee.diachi,
+                'ngaysinh': employee.ngaysinh,
+                'gioitinh': employee.gioitinh,
             })
         return employees_data
 
@@ -274,9 +274,9 @@ class EmployeeListFrame(tk.Frame):
 
         # Insert the updated shoe data into the Treeview
         for employee in self.employees_data:
-            if employee['gender'] == 1:
-                gender = 'Male'
+            if employee['gioitinh'] == 1:
+                gender = 'Nam'
             else:
-                gender = 'Female'
-            self.tree.insert("", "end", values=(employee['id'], employee['card_id'], employee['name'],
-                             employee['phone'], employee['address'], employee['dob'], gender))
+                gender = 'Nữ'
+            self.tree.insert("", "end", values=(employee['id'], employee['manv'], employee['ten'],
+                             employee['sdt'], employee['diachi'], employee['ngaysinh'], gender))

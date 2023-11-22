@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, DateTime, Date
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, DateTime, Date, BIGINT
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 from datetime import datetime
 
@@ -18,54 +19,58 @@ Base = declarative_base()
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'taikhoan'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(255), nullable=False)
-    password = Column(String(255), nullable=False)
-    user_type = Column(Integer, default=1, nullable=False)
+    tendangnhap = Column(String(255), nullable=False)
+    matkhau = Column(String(255), nullable=False)
+    loai = Column(Integer, default=1, nullable=False)
     status = Column(Integer, default=1, nullable=False)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
     updated_at = Column(DateTime, default=datetime.now(), nullable=False)
 
 
 class Shoe(Base):
-    __tablename__ = 'shoes'
+    __tablename__ = 'sanpham'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255), nullable=False)
-    brand = Column(String(255))
-    size = Column(Float)
-    color = Column(String(255))
-    genre = Column(String(255))
-    quantity = Column(Integer)
+    ten = Column(String(255), nullable=False)
+    thuonghieu = Column(String(255))
+    kichthuoc = Column(Float)
+    mausac = Column(String(255))
+    theloai = Column(String(255))
+    soluong = Column(Integer)
+    gia = Column(BIGINT)
     status = Column(Integer, default=1, nullable=False)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
     updated_at = Column(DateTime, default=datetime.now(), nullable=False)
 
 
 class Employee(Base):
-    __tablename__ = 'employees'
+    __tablename__ = 'nhanvien'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    card_id = Column(String(255), nullable=False)
-    name = Column(String(255), nullable=False)
-    phone = Column(String(255))
-    address = Column(String(255))
-    dob = Column(Date)
-    gender = Column(Integer, default=1, nullable=False)
+    manv = Column(String(255), nullable=False)
+    ten = Column(String(255), nullable=False)
+    sdt = Column(String(255))
+    diachi = Column(String(255))
+    ngaysinh = Column(Date)
+    gioitinh = Column(Integer, default=1, nullable=False)
     status = Column(Integer, default=1, nullable=False)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
     updated_at = Column(DateTime, default=datetime.now(), nullable=False)
 
+    # Add a relationship to the Imports model
+    # imports = relationship('Imports', back_populates='nhanvien')
+
 
 class Supplier(Base):
-    __tablename__ = 'suppliers'
+    __tablename__ = 'nhacungcap'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255), nullable=False)
-    phone = Column(String(255))
-    address = Column(String(255))
+    ten = Column(String(255), nullable=False)
+    sdt = Column(String(255))
+    diachi = Column(String(255))
     email = Column(String(255))
     status = Column(Integer, default=1, nullable=False)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
@@ -73,17 +78,36 @@ class Supplier(Base):
 
 
 class Imports(Base):
-    __tablename__ = 'imports'
+    __tablename__ = 'nhaphang'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    import_id = Column(String(255), nullable=False)
-    name = Column(String(255), nullable=False)
-    phone = Column(String(255))
-    address = Column(String(255))
-    email = Column(String(255))
+    manhap = Column(String(255), nullable=False)
+    id_nhanvien = Column(Integer)
     status = Column(Integer, default=1, nullable=False)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
     updated_at = Column(DateTime, default=datetime.now(), nullable=False)
+
+    # Add a relationship to the Employee model
+    # employee = relationship('Employee', back_populates='nhaphang')
+
+
+class ImportDetails(Base):
+    __tablename__ = 'nhaphang_chitiet'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    id_nhaphang = Column(Integer, ForeignKey('nhaphang.id'), nullable=False)
+    id_sanpham = Column(Integer, ForeignKey('sanpham.id'), nullable=False)
+    id_nhacungcap = Column(Integer, nullable=False)
+    soluong = Column(Integer, nullable=False)
+    thanhtien = Column(Float, nullable=False)
+    status = Column(Integer, default=1, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(), nullable=False)
+    updated_at = Column(DateTime, default=datetime.now(), nullable=False)
+
+    # Define relationships to the Import, Shoe, and Supplier models
+    # import_obj = relationship('Imports', back_populates='nhaphang_chitiet')
+    # shoe = relationship('Shoe', back_populates='nhaphang_chitiet')
+    # supplier = relationship('Supplier', back_populates='nhaphang_chitiet')
 
 
 # Create the tables in the database
@@ -133,12 +157,40 @@ def insert_supplier(supplier):
         session.close()
 
 
+def insert_imports(imports):
+    session = get_connection()
+    try:
+        session.add(imports)
+        session.commit()
+    finally:
+        session.close()
+
+
+def insert_import_details(import_details):
+    session = get_connection()
+    try:
+        session.add(import_details)
+        session.commit()
+    finally:
+        session.close()
+
+
 def get_user_by_username_password(username, password):
     session = get_connection()
     try:
         user_data = session.query(User).filter_by(
-            username=username, password=password).first()
+            tendangnhap=username, matkhau=password).first()
         return user_data
+    finally:
+        session.close()
+
+
+def get_import_details(import_id):
+    session = get_connection()
+    try:
+        import_detail_datas = session.query(ImportDetails).filter_by(
+            ImportDetails.id_nhaphang == import_id).all()
+        return import_detail_datas
     finally:
         session.close()
 
@@ -172,19 +224,30 @@ def get_all_suppliers():
         session.close()
 
 
-def update_shoe(shoe_id, name, brand, size, color, genre, quantity):
+def get_all_imports():
+    session = get_connection()
+    try:
+        imports_data = session.query(
+            Imports).where(Imports.status == 1).all()
+        return imports_data
+    finally:
+        session.close()
+
+
+def update_shoe(shoe_id, name, brand, size, color, genre, price, quantity):
     session = get_connection()
     try:
         # Get the shoe to edit from the database
         shoe_to_edit = session.query(Shoe).filter_by(id=shoe_id).first()
 
         # Update the shoe details with the edited values
-        shoe_to_edit.name = name
-        shoe_to_edit.brand = brand
-        shoe_to_edit.size = size
-        shoe_to_edit.color = color
-        shoe_to_edit.genre = genre
-        shoe_to_edit.quantity = quantity
+        shoe_to_edit.ten = name
+        shoe_to_edit.thuonghieu = brand
+        shoe_to_edit.kichthuoc = size
+        shoe_to_edit.mausac = color
+        shoe_to_edit.theloai = genre
+        shoe_to_edit.soluong = quantity
+        shoe_to_edit.gia = price
         session.commit()
     finally:
         session.close()
@@ -198,12 +261,12 @@ def update_employee(employee_id, card_id, name, phone, address, dob, gender):
             Employee).filter_by(id=employee_id).first()
 
         # Update the shoe details with the edited values
-        employee_to_edit.card_id = card_id
-        employee_to_edit.name = name
-        employee_to_edit.phone = phone
-        employee_to_edit.address = address
-        employee_to_edit.dob = dob
-        employee_to_edit.gender = gender
+        employee_to_edit.manv = card_id
+        employee_to_edit.ten = name
+        employee_to_edit.sdt = phone
+        employee_to_edit.diachi = address
+        employee_to_edit.ngaysinh = dob
+        employee_to_edit.gioitinh = gender
         session.commit()
     finally:
         session.close()
@@ -217,13 +280,17 @@ def update_supplier(supplier_id, name, phone, email, address):
             Supplier).filter_by(id=supplier_id).first()
 
         # Update the shoe details with the edited values
-        employee_to_edit.name = name
-        employee_to_edit.phone = phone
-        employee_to_edit.address = address
+        employee_to_edit.ten = name
+        employee_to_edit.sdt = phone
+        employee_to_edit.diachi = address
         employee_to_edit.email = email
         session.commit()
     finally:
         session.close()
+
+
+def update_imports():
+    pass
 
 
 def delete_shoe(shoe_id):
@@ -268,3 +335,7 @@ def delete_supplier(supplier_id):
         session.commit()
     finally:
         session.close()
+
+
+def delete_imports():
+    pass

@@ -19,7 +19,7 @@ class ShoesListFrame(tk.Frame):
         self.shoes_data = self.get_shoes_data_from_db()
 
         self.tree = ttk.Treeview(self, columns=(
-            "ID", "Name", "Brand", "Size", "Color", "Genre", "Quantity"), show="headings")
+            "ID", "Tên", "Thương hiệu", "Kích cỡ", "Màu sắc", "Thể loại", "Giá tiền", "Số lượng"), show="headings")
 
         # Store the entry values as instance variables
         self.name_entry = None
@@ -27,30 +27,33 @@ class ShoesListFrame(tk.Frame):
         self.size_entry = None
         self.color_entry = None
         self.genre_entry = None
+        self.price_entry = None
         self.quantity_entry = None
 
         # Set the column headings
         self.tree.heading("ID", text="ID")
-        self.tree.heading("Name", text="Name")
-        self.tree.heading("Brand", text="Brand")
-        self.tree.heading("Size", text="Size")
-        self.tree.heading("Color", text="Color")
-        self.tree.heading("Genre", text="Genre")
-        self.tree.heading("Quantity", text="Quantity")
+        self.tree.heading("Tên", text="Tên")
+        self.tree.heading("Thương hiệu", text="Thương hiệu")
+        self.tree.heading("Kích cỡ", text="Kích cỡ")
+        self.tree.heading("Màu sắc", text="Màu sắc")
+        self.tree.heading("Thể loại", text="Thể loại")
+        self.tree.heading("Giá tiền", text="Giá tiền")
+        self.tree.heading("Số lượng", text="Số lượng")
 
         # Set the column widths based on content
         self.tree.column("ID", width=50, anchor="center")
-        self.tree.column("Name", width=150, anchor="center")
-        self.tree.column("Brand", width=100, anchor="center")
-        self.tree.column("Size", width=50, anchor="center")
-        self.tree.column("Color", width=100, anchor="center")
-        self.tree.column("Genre", width=100, anchor="center")
-        self.tree.column("Quantity", width=50, anchor="center")
+        self.tree.column("Tên", width=150, anchor="center")
+        self.tree.column("Thương hiệu", width=100, anchor="center")
+        self.tree.column("Kích cỡ", width=50, anchor="center")
+        self.tree.column("Màu sắc", width=50, anchor="center")
+        self.tree.column("Thể loại", width=50, anchor="center")
+        self.tree.column("Giá tiền", width=100, anchor="center")
+        self.tree.column("Số lượng", width=50, anchor="center")
 
         # Insert the shoe data into the Treeview
         for shoe in self.shoes_data:
             self.tree.insert("", "end", values=(
-                shoe['id'], shoe['name'], shoe['brand'], shoe['size'], shoe['color'], shoe['genre'], shoe['quantity']))
+                shoe['id'], shoe['ten'], shoe['thuonghieu'], shoe['kichthuoc'], shoe['mausac'], shoe['theloai'], shoe['gia'], shoe['soluong']))
 
         self.tree.pack(padx=20, pady=20, fill="both", expand=True)
 
@@ -58,18 +61,18 @@ class ShoesListFrame(tk.Frame):
 
         # Add an "Add Shoe" button
         self.add_shoe_button = tk.Button(
-            self, text="Add Shoe", command=self.open_add_shoe_window)
+            self, text="Thêm sản phẩm", command=self.open_add_shoe_window)
         self.add_shoe_button.pack(pady=10)
 
         # Add a search box and button
-        self.search_label = tk.Label(self, text="Search by Name:")
+        self.search_label = tk.Label(self, text="Tìm theo tên:")
         self.search_label.pack(pady=10)
 
         self.search_entry = tk.Entry(self)
         self.search_entry.pack(pady=5)
 
         self.search_button = tk.Button(
-            self, text="Search", command=self.perform_search)
+            self, text="Tìm kiếm", command=self.perform_search)
         self.search_button.pack(pady=5)
 
     def perform_search(self):
@@ -86,22 +89,23 @@ class ShoesListFrame(tk.Frame):
         # Insert the search results into the Treeview
         for shoe in search_results:
             self.tree.insert("", "end", values=(
-                shoe['id'], shoe['name'], shoe['brand'], shoe['size'], shoe['color'], shoe['genre'], shoe['quantity']))
+                shoe['id'], shoe['ten'], shoe['thuonghieu'], shoe['kichthuoc'], shoe['mausac'], shoe['theloai'], shoe['gia'], shoe['soluong']))
 
     def search_shoes_by_name(self, keyword):
         # Retrieve shoe data from the database that matches the search keyword
         shoes_data = []
         shoes = get_all_shoes()
         for shoe in shoes:
-            if keyword.lower() in shoe.name.lower():
+            if keyword.lower() in shoe.ten.lower():
                 shoes_data.append({
                     'id': shoe.id,
-                    'name': shoe.name,
-                    'brand': shoe.brand,
-                    'size': shoe.size,
-                    'color': shoe.color,
-                    'genre': shoe.genre,
-                    'quantity': shoe.quantity
+                    'ten': shoe.ten,
+                    'thuonghieu': shoe.thuonghieu,
+                    'kichthuoc': shoe.kichthuoc,
+                    'mausac': shoe.mausac,
+                    'theloai': shoe.theloai,
+                    'gia': shoe.gia,
+                    'soluong': shoe.soluong
                 })
         return shoes_data
 
@@ -122,7 +126,8 @@ class ShoesListFrame(tk.Frame):
         edit_window.geometry("400x300")
 
         # Create labels and entry fields for editing
-        labels = ["Name", "Brand", "Size", "Color", "Genre", "Quantity"]
+        labels = ["Tên", "Thương hiệu", "Kích cỡ",
+                  "Màu sắc", "Thể loại", "Giá tiền", "Số lượng"]
         entries = []
 
         for label in labels:
@@ -138,19 +143,19 @@ class ShoesListFrame(tk.Frame):
         button_frame.pack()
 
         # Create a "Save" button within the button frame
-        save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_edited_shoe(
+        save_button = tk.Button(button_frame, text="Lưu", command=lambda: self.save_edited_shoe(
             shoe_data[0], [entry.get() for entry in entries], edit_window))
         save_button.pack(side=tk.LEFT)
 
         # Create a "Delete" button within the button frame
         delete_button = tk.Button(
-            button_frame, text="Delete", command=lambda: self.delete_shoe(shoe_data[0], edit_window))
+            button_frame, text="Xóa", command=lambda: self.delete_shoe(shoe_data[0], edit_window))
         delete_button.pack(side=tk.LEFT)
 
     def save_edited_shoe(self, shoe_id, updated_data, edit_window):
         try:
             update_shoe(shoe_id, *updated_data)
-            messagebox.showinfo("Result", "Shoe updated")
+            messagebox.showinfo("Result", "Sản phẩm đã được cập nhật")
             # Refresh the table data
             self.refresh_table_data()
 
@@ -162,10 +167,10 @@ class ShoesListFrame(tk.Frame):
     def delete_shoe(self, shoe_id, edit_window):
         try:
             result = messagebox.askyesno(
-                "Confirm Delete", "Are you sure you want to delete this shoe?")
+                "Xác nhận xóa", "Bạn có muốn xóa sản phẩm này?")
             if result:
                 delete_shoe(shoe_id)
-                messagebox.showinfo("Result", "Shoe deleted")
+                messagebox.showinfo("Result", "Sản phẩm đã xóa")
                 # Refresh the table data
                 self.refresh_table_data()
 
@@ -177,11 +182,12 @@ class ShoesListFrame(tk.Frame):
     def open_add_shoe_window(self):
         # Create a new window for adding a new shoe
         add_shoe_window = Toplevel(self.master)
-        add_shoe_window.title("Add Shoe")
+        add_shoe_window.title("Thêm sản phẩm")
         add_shoe_window.geometry("400x300")
 
         # Create and arrange input fields for shoe attributes
-        labels = ["Name", "Brand", "Size", "Color", "Genre", "Quantity"]
+        labels = ["Tên", "Thương hiệu", "Kích cỡ",
+                  "Màu sắc", "Thể loại", "Giá tiền", "Số lượng"]
         entries = []
 
         for label in labels:
@@ -197,11 +203,12 @@ class ShoesListFrame(tk.Frame):
         self.size_entry = entries[2]
         self.color_entry = entries[3]
         self.genre_entry = entries[4]
-        self.quantity_entry = entries[5]
+        self.price_entry = entries[5]
+        self.quantity_entry = entries[6]
 
         # Create a button to submit the new shoe data
         submit_button = tk.Button(
-            add_shoe_window, text="Submit", command=lambda: self.add_new_shoe(add_shoe_window))
+            add_shoe_window, text="Thêm", command=lambda: self.add_new_shoe(add_shoe_window))
         submit_button.pack()
 
     def add_new_shoe(self, add_shoe_window):
@@ -211,10 +218,11 @@ class ShoesListFrame(tk.Frame):
             size = self.size_entry.get()
             color = self.color_entry.get()
             genre = self.genre_entry.get()
+            price = self.price_entry
             quantity = self.quantity_entry.get()
 
-            new_shoe = Shoe(name=name, brand=brand, size=size,
-                            color=color, genre=genre, quantity=quantity)
+            new_shoe = Shoe(ten=name, thuonghieu=brand, kichthuoc=size,
+                            mausac=color, theloai=genre, gia=price, soluong=quantity)
             insert_shoe(new_shoe)
             messagebox.showinfo("Result", "New shoe added")
             # Refresh the table data
@@ -232,12 +240,13 @@ class ShoesListFrame(tk.Frame):
         for shoe in shoes:
             shoes_data.append({
                 'id': shoe.id,
-                'name': shoe.name,
-                'brand': shoe.brand,
-                'size': shoe.size,
-                'color': shoe.color,
-                'genre': shoe.genre,
-                'quantity': shoe.quantity
+                'ten': shoe.ten,
+                'thuonghieu': shoe.thuonghieu,
+                'kichthuoc': shoe.kichthuoc,
+                'mausac': shoe.mausac,
+                'theloai': shoe.theloai,
+                'gia': shoe.gia,
+                'soluong': shoe.soluong
             })
         return shoes_data
 
@@ -252,4 +261,4 @@ class ShoesListFrame(tk.Frame):
         # Insert the updated shoe data into the Treeview
         for shoe in self.shoes_data:
             self.tree.insert("", "end", values=(
-                shoe['id'], shoe['name'], shoe['brand'], shoe['size'], shoe['color'], shoe['genre'], shoe['quantity']))
+                shoe['id'], shoe['ten'], shoe['thuonghieu'], shoe['kichthuoc'], shoe['mausac'], shoe['theloai'], shoe['gia'], shoe['soluong']))

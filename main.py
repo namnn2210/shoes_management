@@ -6,6 +6,7 @@ from functions import LoginRegisterFunctions
 from shoes_list_frame import ShoesListFrame
 from employee_list_frame import EmployeeListFrame
 from supplier_list_frame import SupplierListFrame
+from import_list_frame import ImportListFrame
 
 
 class MainApplication(tk.Tk):
@@ -68,6 +69,11 @@ class MainMenuFrame(tk.Frame):
         self.master.title("Main Menu")
         self.master.geometry("800x600")
 
+        self.employee_window = None
+        self.shoes_window = None
+        self.import_window = None
+        self.supplier_window = None
+
         # Create a style for the buttons
         style = ttk.Style()
         style.configure("MainMenu.TButton", font=("Helvetica", 14), padding=10)
@@ -87,38 +93,47 @@ class MainMenuFrame(tk.Frame):
         supplier_button.pack(pady=10)
 
     def show_employee_management(self):
-        # Switch to the ShoesListFrame for shoes management
-        employee_window = tk.Toplevel(self.master)
-        employee_window.title("Employee Management")
-        employee_window.geometry("800x600")
+        if self.employee_window is None:
+            # Switch to the ShoesListFrame for shoes management
+            self.employee_window = tk.Toplevel(self.master)
+            self.employee_window.title("Employee Management")
+            self.employee_window.geometry("800x600")
 
-        # Create a new instance of ShoesListFrame in the new window
-        employee_frame = EmployeeListFrame(employee_window)
-        employee_frame.pack(fill="both", expand=True)
+            # Create a new instance of ShoesListFrame in the new window
+            employee_frame = EmployeeListFrame(self.employee_window)
+            employee_frame.pack(fill="both", expand=True)
 
     def show_shoes_management(self):
         # Switch to the ShoesListFrame for shoes management
         # Create a new window for ShoesListFrame
-        shoes_window = tk.Toplevel(self.master)
-        shoes_window.title("Shoes Management")
-        shoes_window.geometry("800x600")
+        if self.shoes_window is None:
+            self.shoes_window = tk.Toplevel(self.master)
+            self.shoes_window.title("Shoes Management")
+            self.shoes_window.geometry("800x600")
 
-        # Create a new instance of ShoesListFrame in the new window
-        shoes_frame = ShoesListFrame(shoes_window)
-        shoes_frame.pack(fill="both", expand=True)
+            # Create a new instance of ShoesListFrame in the new window
+            shoes_frame = ShoesListFrame(self.shoes_window)
+            shoes_frame.pack(fill="both", expand=True)
 
     def show_import_management(self):
-        # Implement functionality for export management screen (if needed)
-        pass
+        if self.import_window is None:
+            self.import_window = tk.Toplevel(self.master)
+            self.import_window.title("Import Management")
+            self.import_window.geometry("800x600")
+
+            # Create a new instance of ShoesListFrame in the new window
+            import_frame = ImportListFrame(self.import_window)
+            import_frame.pack(fill="both", expand=True)
 
     def show_supplier_management(self):
-        supplier_window = tk.Toplevel(self.master)
-        supplier_window.title("Supplier Management")
-        supplier_window.geometry("800x600")
+        if self.supplier_window is None:
+            self.supplier_window = tk.Toplevel(self.master)
+            self.supplier_window.title("Supplier Management")
+            self.supplier_window.geometry("800x600")
 
-        # Create a new instance of ShoesListFrame in the new window
-        supplier_frame = SupplierListFrame(supplier_window)
-        supplier_frame.pack(fill="both", expand=True)
+            # Create a new instance of ShoesListFrame in the new window
+            supplier_frame = SupplierListFrame(self.supplier_window)
+            supplier_frame.pack(fill="both", expand=True)
 
 
 if __name__ == "__main__":
