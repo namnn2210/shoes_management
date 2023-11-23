@@ -16,7 +16,7 @@ class LoginRegisterFunctions:
         else:
             try:
                 # You would typically insert the username and password into your MySQL database here
-                user = User(username=username, password=password)
+                user = User(tendangnhap=username, matkhau=password)
                 insert_user(user=user)
                 return "Registration successful!", True
             except IntegrityError:
@@ -31,12 +31,9 @@ class LoginRegisterFunctions:
         else:
             # You would typically query your MySQL database to check if the username and password match
             # Here, we're using a hardcoded example for simplicity
-            if username == "user" and password == "password":
-                user = get_user_by_username_password(
-                    username=username, password=password)
-                if user:
-                    return "Login successful!", True
-                else:
-                    return "Invalid username or password", False
+            user = get_user_by_username_password(
+                username=username, password=password)
+            if user:
+                return "Đăng nhập thành công", False
             else:
-                return "Invalid username or password", False
+                return "Thông tin đăng nhập không chính xác", True

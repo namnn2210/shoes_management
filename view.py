@@ -7,25 +7,25 @@ class LoginRegisterView:
         self.root = root
 
         self.username_label = tk.Label(
-            root, text="Username:", font=("Helvetica", 14))
+            root, text="Tên đăng nhập:", font=("Helvetica", 14))
         self.username_label.pack(pady=8)
 
         self.username_entry = tk.Entry(root, font=("Helvetica", 14))
         self.username_entry.pack(pady=4)
 
         self.password_label = tk.Label(
-            root, text="Password:", font=("Helvetica", 14))
+            root, text="Mật khẩu:", font=("Helvetica", 14))
         self.password_label.pack(pady=8)
 
         self.password_entry = tk.Entry(root, show="*", font=("Helvetica", 14))
         self.password_entry.pack(pady=4)
 
         self.login_button = tk.Button(
-            root, text="Login", command=login_callback, font=("Helvetica", 14))
+            root, text="Đăng nhập", command=login_callback, font=("Helvetica", 14))
         self.login_button.pack(pady=8)
 
         self.register_button = tk.Button(
-            root, text="Register", command=register_callback, font=("Helvetica", 14))
+            root, text="Đăng kí", command=register_callback, font=("Helvetica", 14))
         self.register_button.pack(pady=8)
 
     def get_username(self):

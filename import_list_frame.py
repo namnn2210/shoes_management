@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import Toplevel
 from tkinter import messagebox
-from connections import get_all_suppliers, get_all_shoes, get_all_employees, get_all_imports, insert_imports, update_imports, delete_imports, insert_import_details, get_import_details, Imports, ImportDetails
+from connections import get_all_suppliers, get_all_shoes, get_shoes, get_supplier, get_employee, get_all_employees, get_all_imports, insert_imports, update_imports, delete_imports, insert_import_details, get_import_details, Imports, ImportDetails
 
 
 class ImportListFrame(tk.Frame):
@@ -39,8 +39,9 @@ class ImportListFrame(tk.Frame):
 
         # Insert the import_obj data into the Treeview
         for import_obj in self.import_objs_data:
+            nhanvien = get_employee(import_obj['id_nhanvien']).ten
             self.tree.insert("", "end", values=(
-                import_obj['id'], import_obj['manhap'], import_obj['id_nhanvien'], import_obj['created_at']))
+                import_obj['id'], import_obj['manhap'], nhanvien, import_obj['created_at']))
 
         self.tree.pack(padx=20, pady=20, fill="both", expand=True)
 
@@ -75,8 +76,9 @@ class ImportListFrame(tk.Frame):
 
         # Insert the search results into the Treeview
         for import_obj in search_results:
+            nhanvien = get_employee(import_obj['id_nhanvien']).ten
             self.tree.insert("", "end", values=(
-                import_obj['id'], import_obj['manhap'], import_obj['id_nhanvien'], import_obj['created_at']))
+                import_obj['id'], import_obj['manhap'], nhanvien, import_obj['created_at']))
 
     def search_import_objs_by_name(self, keyword):
         # Retrieve import_obj data from the database that matches the search keyword
@@ -106,7 +108,7 @@ class ImportListFrame(tk.Frame):
         # Create a new window for editing import_obj details
         edit_window = Toplevel(self.master)
         edit_window.title("Edit import_obj")
-        edit_window.geometry("400x300")
+        edit_window.geometry("600x400")
 
         # Create labels and entry fields for editing
         labels = ["Mã phiếu nhập", "Nhân viên"]
@@ -150,33 +152,38 @@ class ImportListFrame(tk.Frame):
         add_detail_button.pack()
 
         import_details_tree = ttk.Treeview(edit_window, columns=(
-            "Sản phẩm", "Nhà cung cấp ", "Số lượng", "Thành tiền"))
-        import_details_tree.pack(padx=20, pady=20, fill="both", expand=True)
+            "Sản phẩm ID", "Nhà cung cấp ID", "Số lượng", "Thành tiền"), show="headings")
 
         # Define column headings
-        import_details_tree.heading("Sản phẩm", text="Sản phẩm")
-        import_details_tree.heading("Nhà cung cấp", text="Nhà cung cấp")
-        import_details_tree.heading("Số lượng", text="Số lượng")
-        import_details_tree.heading("Thành tiền", text="Thành tiền")
+        import_details_tree.heading("#1", text="Sản phẩm ID")
+        import_details_tree.heading("#2", text="Nhà cung cấp ID")
+        import_details_tree.heading("#3", text="Số lượng")
+        import_details_tree.heading("#4", text="Thành tiền")
 
         # Define column widths
-        import_details_tree.column("Sản phẩm", width=100)
-        import_details_tree.column("Nhà cung cấp", width=100)
-        import_details_tree.column("Số lượng", width=100)
-        import_details_tree.column("Thành tiền", width=100)
+        import_details_tree.column("#1", width=100)
+        import_details_tree.column("#2", width=100)
+        import_details_tree.column("#3", width=100)
+        import_details_tree.column("#4", width=100)
 
         # You will need to fetch and insert your ImportDetails data into the Treeview here
         import_details_data = get_import_details(
             import_obj_data[0])  # Implement this function
+
         for detail in import_details_data:
+            sanpham = get_shoes(detail.id_sanpham)
+            nhacungcap = get_supplier(detail.id_nhacungcap)
+            thanhtien = sanpham.gia * detail.soluong
             import_details_tree.insert("", "end", values=(
-                detail['id_sanpham'], detail['id_nhacungcap'], detail['soluong'], detail['thanhtien']))
+                sanpham.ten, nhacungcap.ten, detail.soluong, thanhtien))
+
+        import_details_tree.pack(padx=20, pady=20, fill="both", expand=True)
 
     def open_add_import_detail_window(self, import_id):
         # Create a new window for adding import details
         add_detail_window = Toplevel(self.master)
         add_detail_window.title("Thêm chi tiết phiếu nhập")
-        add_detail_window.geometry("400x300")
+        add_detail_window.geometry("600x400")
 
         # Create a label and dropdown list for "Sản phẩm ID"
         label_sanpham = tk.Label(add_detail_window, text="Sản phẩm:")
@@ -256,10 +263,10 @@ class ImportListFrame(tk.Frame):
     def delete_import_obj(self, import_obj_id, edit_window):
         try:
             result = messagebox.askyesno(
-                "Xác nhận xóa", "Bạn có muốn xóa sản phẩm này?")
+                "Xác nhận xóa", "Bạn có muốn xóa phiếu nhập này này?")
             if result:
                 delete_imports(import_obj_id)
-                messagebox.showinfo("Result", "Sản phẩm đã xóa")
+                messagebox.showinfo("Result", "Phiếu nhập đã xóa")
                 # Refresh the table data
                 self.refresh_table_data()
 
@@ -272,7 +279,7 @@ class ImportListFrame(tk.Frame):
         # Create a new window for adding a new import_obj
         add_import_obj_window = Toplevel(self.master)
         add_import_obj_window.title("Thêm phiếu nhập")
-        add_import_obj_window.geometry("400x300")
+        add_import_obj_window.geometry("600x400")
 
         # Create and arrange input fields for import_obj attributes
         labels = ["Mã phiếu nhập", "Nhân viên"]
@@ -284,8 +291,10 @@ class ImportListFrame(tk.Frame):
             if label == "Nhân viên":
                 # Create a combobox for selecting an employee
                 employees = get_all_employees()
-                employee_names = [employee.ten for employee in employees]
+                employee_dict = {
+                    employee.ten: employee.id for employee in employees}
                 self.selected_employee_id = tk.StringVar()
+                employee_names = list(employee_dict.keys())
                 employee_combobox = ttk.Combobox(
                     add_import_obj_window, textvariable=self.selected_employee_id, values=employee_names, state="readonly")
                 employee_combobox.pack()
@@ -312,14 +321,14 @@ class ImportListFrame(tk.Frame):
             new_import_obj = Imports(
                 manhap=nhaphang, id_nhanvien=id_nhanvien)
             insert_imports(new_import_obj)
-            messagebox.showinfo("Result", "New import_obj added")
+            messagebox.showinfo("Result", "Thêm phiếu nhập thành công")
             # Refresh the table data
             self.refresh_table_data()
 
             # Close the add import_obj window after successfully adding
             add_import_obj_window.destroy()
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+            messagebox.showerror("Error", f"Lỗi: {str(e)}")
 
     def get_import_objs_data_from_db(self):
         # Retrieve import_obj data from the database

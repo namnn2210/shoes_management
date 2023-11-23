@@ -9,7 +9,7 @@ class ShoesListFrame(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
-        self.master.title("Shoe Management System")
+        self.master.title("Hệ thống quản lí sản phẩm")
         self.master.geometry("800x600")
 
         # Center the frame in the root window
@@ -122,8 +122,8 @@ class ShoesListFrame(tk.Frame):
     def open_edit_shoe_window(self, shoe_data):
         # Create a new window for editing shoe details
         edit_window = Toplevel(self.master)
-        edit_window.title("Edit Shoe")
-        edit_window.geometry("400x300")
+        edit_window.title("Cập nhật sản phẩm")
+        edit_window.geometry("600x400")
 
         # Create labels and entry fields for editing
         labels = ["Tên", "Thương hiệu", "Kích cỡ",
@@ -183,7 +183,7 @@ class ShoesListFrame(tk.Frame):
         # Create a new window for adding a new shoe
         add_shoe_window = Toplevel(self.master)
         add_shoe_window.title("Thêm sản phẩm")
-        add_shoe_window.geometry("400x300")
+        add_shoe_window.geometry("600x400")
 
         # Create and arrange input fields for shoe attributes
         labels = ["Tên", "Thương hiệu", "Kích cỡ",
@@ -218,20 +218,20 @@ class ShoesListFrame(tk.Frame):
             size = self.size_entry.get()
             color = self.color_entry.get()
             genre = self.genre_entry.get()
-            price = self.price_entry
+            price = self.price_entry.get()
             quantity = self.quantity_entry.get()
 
             new_shoe = Shoe(ten=name, thuonghieu=brand, kichthuoc=size,
                             mausac=color, theloai=genre, gia=price, soluong=quantity)
             insert_shoe(new_shoe)
-            messagebox.showinfo("Result", "New shoe added")
+            messagebox.showinfo("Result", "Thêm sản phẩm mới thành công")
             # Refresh the table data
             self.refresh_table_data()
 
             # Close the add shoe window after successfully adding
             add_shoe_window.destroy()
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+            messagebox.showerror("Error", f"Lỗi: {str(e)}")
 
     def get_shoes_data_from_db(self):
         # Retrieve shoe data from the database

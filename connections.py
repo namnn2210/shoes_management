@@ -178,8 +178,8 @@ def insert_import_details(import_details):
 def get_user_by_username_password(username, password):
     session = get_connection()
     try:
-        user_data = session.query(User).filter_by(
-            tendangnhap=username, matkhau=password).first()
+        user_data = session.query(User).where(
+            User.tendangnhap == username).where(User.matkhau == password).first()
         return user_data
     finally:
         session.close()
@@ -188,9 +188,38 @@ def get_user_by_username_password(username, password):
 def get_import_details(import_id):
     session = get_connection()
     try:
-        import_detail_datas = session.query(ImportDetails).filter_by(
+        import_detail_datas = session.query(ImportDetails).where(
             ImportDetails.id_nhaphang == import_id).all()
         return import_detail_datas
+    finally:
+        session.close()
+
+
+def get_shoes(shoes_id):
+    session = get_connection()
+    try:
+        shoe_data = session.query(Shoe).where(Shoe.id == shoes_id).first()
+        return shoe_data
+    finally:
+        session.close()
+
+
+def get_supplier(supplier_id):
+    session = get_connection()
+    try:
+        supplier_data = session.query(Supplier).where(
+            Supplier.id == supplier_id).first()
+        return supplier_data
+    finally:
+        session.close()
+
+
+def get_employee(employee_id):
+    session = get_connection()
+    try:
+        employee_data = session.query(Employee).where(
+            Employee.id == employee_id).first()
+        return employee_data
     finally:
         session.close()
 
@@ -337,5 +366,16 @@ def delete_supplier(supplier_id):
         session.close()
 
 
-def delete_imports():
-    pass
+def delete_imports(import_id):
+    session = get_connection()
+    try:
+        # Get the shoe to edit from the database
+        supplier_to_edit = session.query(
+            Imports).filter_by(id=import_id).first()
+
+        # Update the shoe details with the edited values
+        supplier_to_edit.status = 0
+
+        session.commit()
+    finally:
+        session.close()

@@ -128,7 +128,7 @@ class EmployeeListFrame(tk.Frame):
         # Create a new window for editing shoe details
         edit_window = Toplevel(self.master)
         edit_window.title("Cập nhật nhân viên")
-        edit_window.geometry("400x300")
+        edit_window.geometry("600x400")
 
         # Create labels and entry fields for editing
         labels = ["Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính"]
@@ -187,7 +187,7 @@ class EmployeeListFrame(tk.Frame):
         # Create a new window for adding a new shoe
         add_shoe_window = Toplevel(self.master)
         add_shoe_window.title("Thêm nhân viên mới")
-        add_shoe_window.geometry("400x300")
+        add_shoe_window.geometry("600x400")
 
         # Create and arrange input fields for shoe attributes
         labels = ["Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh"]

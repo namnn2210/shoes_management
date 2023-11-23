@@ -12,7 +12,7 @@ from import_list_frame import ImportListFrame
 class MainApplication(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.title("Login and Registration")
+        # self.title("Login and Registration")
         self.geometry("800x600")
         self.current_frame = None
 
@@ -40,7 +40,7 @@ class LoginRegisterFrame(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
-        self.master.title("Login and Registration")
+        self.master.title("Đăng kí và đăng nhập")
         self.master.geometry("800x600")
 
         self.view = LoginRegisterView(
@@ -54,6 +54,7 @@ class LoginRegisterFrame(tk.Frame):
             messagebox.showinfo("Error", result)
         else:
             # After successful login, switch to the main menu
+            messagebox.showinfo("Result", result)
             self.master.switch_to_main_menu()
 
     def register_callback(self):
@@ -66,7 +67,7 @@ class MainMenuFrame(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
-        self.master.title("Main Menu")
+        self.master.title("Menu chính")
         self.master.geometry("800x600")
 
         self.employee_window = None
@@ -79,16 +80,16 @@ class MainMenuFrame(tk.Frame):
         style.configure("MainMenu.TButton", font=("Helvetica", 14), padding=10)
 
         # Create buttons for the four management options with the defined style
-        employee_button = ttk.Button(self, text="Employee Management",
+        employee_button = ttk.Button(self, text="Quản lí nhân viên",
                                      command=self.show_employee_management, style="MainMenu.TButton")
         employee_button.pack(pady=10)
-        shoes_button = ttk.Button(self, text="Shoes Management",
+        shoes_button = ttk.Button(self, text="Quản lí sản phẩm",
                                   command=self.show_shoes_management, style="MainMenu.TButton")
         shoes_button.pack(pady=10)
-        export_button = ttk.Button(self, text="Import Management",
+        export_button = ttk.Button(self, text="Quản lí nhập hàng",
                                    command=self.show_import_management, style="MainMenu.TButton")
         export_button.pack(pady=10)
-        supplier_button = ttk.Button(self, text="Supplier Management",
+        supplier_button = ttk.Button(self, text="Quản lí nhà cung cấp",
                                      command=self.show_supplier_management, style="MainMenu.TButton")
         supplier_button.pack(pady=10)
 
@@ -96,7 +97,7 @@ class MainMenuFrame(tk.Frame):
         if self.employee_window is None:
             # Switch to the ShoesListFrame for shoes management
             self.employee_window = tk.Toplevel(self.master)
-            self.employee_window.title("Employee Management")
+            self.employee_window.title("Quản lí nhân viên")
             self.employee_window.geometry("800x600")
 
             # Create a new instance of ShoesListFrame in the new window
@@ -108,7 +109,7 @@ class MainMenuFrame(tk.Frame):
         # Create a new window for ShoesListFrame
         if self.shoes_window is None:
             self.shoes_window = tk.Toplevel(self.master)
-            self.shoes_window.title("Shoes Management")
+            self.shoes_window.title("Quản lí sản phẩm")
             self.shoes_window.geometry("800x600")
 
             # Create a new instance of ShoesListFrame in the new window
@@ -118,7 +119,7 @@ class MainMenuFrame(tk.Frame):
     def show_import_management(self):
         if self.import_window is None:
             self.import_window = tk.Toplevel(self.master)
-            self.import_window.title("Import Management")
+            self.import_window.title("Quản lí nhập hàng")
             self.import_window.geometry("800x600")
 
             # Create a new instance of ShoesListFrame in the new window
@@ -128,7 +129,7 @@ class MainMenuFrame(tk.Frame):
     def show_supplier_management(self):
         if self.supplier_window is None:
             self.supplier_window = tk.Toplevel(self.master)
-            self.supplier_window.title("Supplier Management")
+            self.supplier_window.title("Quản lí nhà cung cấp")
             self.supplier_window.geometry("800x600")
 
             # Create a new instance of ShoesListFrame in the new window
