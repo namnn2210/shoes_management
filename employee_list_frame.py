@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import Toplevel
+from tkinter import Toplevel, StringVar
 from tkinter import messagebox
 from connections import get_all_employees, insert_employee, update_employee, delete_employee, Employee
 from tkcalendar import DateEntry
+from datetime import datetime
 
 
 class EmployeeListFrame(tk.Frame):
@@ -131,24 +132,48 @@ class EmployeeListFrame(tk.Frame):
         edit_window.geometry("600x400")
 
         # Create labels and entry fields for editing
-        labels = ["Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính"]
+        labels = ["Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh"]
         entries = []
 
         for label in labels:
             label_entry = tk.Label(edit_window, text=label + ":")
             label_entry.pack()
-            entry = tk.Entry(edit_window)
-            entry.insert(0, shoe_data[labels.index(label) + 1])
-            entry.pack()
-            entries.append(entry)
+            if label == "Ngày sinh":
+                # Use DateEntry widget for Date of Birth
+                dob_entry = DateEntry(edit_window)
+                entry.insert(0, shoe_data[labels.index(label) + 1])
+                dob_entry.pack()
+                entries.append(dob_entry)
+            else:
+                entry = tk.Entry(edit_window)
+                entry.insert(0, shoe_data[labels.index(label) + 1])
+                entry.pack()
+                entries.append(entry)
+
+        gender_label = tk.Label(edit_window, text="Giới tính:")
+        gender_label.pack()
+
+        gender_values = ["Nam", "Nữ"]
+        selected = StringVar(edit_window)
+        selected.set(gender_values[0])
+        gender_combobox = ttk.Combobox(
+            edit_window, textvariable=selected, values=gender_values, state="readonly")
+        gender_combobox.pack()
 
         # Create a frame for the buttons
         button_frame = tk.Frame(edit_window)
         button_frame.pack()
 
+        self.card_id_entry = entries[0]
+        self.name_entry = entries[1]
+        self.phone_entry = entries[2]
+        self.address_entry = entries[3]
+        self.dob_entry = entries[4]
+        self.gender_entry = gender_combobox.get()
+
         # Create a "Save" button within the button frame
         save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_edited_shoe(
-            shoe_data[0], [entry.get() for entry in entries], edit_window))
+            shoe_data[0], edit_window))
         save_button.pack(side=tk.LEFT)
 
         # Create a "Delete" button within the button frame
@@ -156,9 +181,24 @@ class EmployeeListFrame(tk.Frame):
             button_frame, text="Delete", command=lambda: self.delete_shoe(shoe_data[0], edit_window))
         delete_button.pack(side=tk.LEFT)
 
-    def save_edited_shoe(self, shoe_id, updated_data, edit_window):
+    def save_edited_shoe(self, shoe_id, edit_window):
         try:
-            update_employee(shoe_id, *updated_data)
+            card_id = self.card_id_entry.get()
+            name = self.name_entry.get()
+            phone = self.phone_entry.get()
+            address = self.address_entry.get()
+            dob = self.dob_entry.get()
+            date_format = '%m/%d/%y'  # Specify the input date format
+
+            # Parse the string into a datetime object
+            date_obj = datetime.strptime(dob, date_format)
+            normal_date = date_obj.strftime('%Y-%m-%d')
+            if self.gender_entry == 'Nam':
+                gender = 1
+            else:
+                gender = 0
+            update_employee(shoe_id, card_id, name, phone,
+                            address, normal_date, gender)
             messagebox.showinfo("Result", "Employee updated")
             # Refresh the table data
             self.refresh_table_data()
@@ -209,9 +249,11 @@ class EmployeeListFrame(tk.Frame):
         gender_label = tk.Label(add_shoe_window, text="Giới tính:")
         gender_label.pack()
 
-        gender_values = {"Nam": 1, "Nữ": 0}
+        gender_values = ["Nam", "Nữ"]
+        selected = StringVar(add_shoe_window)
+        selected.set(gender_values[0])
         gender_combobox = ttk.Combobox(
-            add_shoe_window, values=list(gender_values.keys()), state="readonly")
+            add_shoe_window, textvariable=selected, values=gender_values, state="readonly")
         gender_combobox.pack()
 
         # Store the entry values as instance variables
@@ -221,6 +263,8 @@ class EmployeeListFrame(tk.Frame):
         self.address_entry = entries[3]
         self.dob_entry = entries[4]
         self.gender_entry = gender_combobox.get()
+
+        # print('================================', type(self.dob_entry.get()))
 
         # Create a button to submit the new shoe data
         submit_button = tk.Button(
@@ -234,10 +278,19 @@ class EmployeeListFrame(tk.Frame):
             phone = self.phone_entry.get()
             address = self.address_entry.get()
             dob = self.dob_entry.get()
-            gender = self.gender_entry
+            date_format = '%m/%d/%y'  # Specify the input date format
+
+            # Parse the string into a datetime object
+            date_obj = datetime.strptime(dob, date_format)
+            normal_date = date_obj.strftime('%Y-%m-%d')
+            if self.gender_entry == 'Nam':
+                gender = 1
+            else:
+                gender = 0
+            # gender = self.gender_entry
 
             new_shoe = Employee(ten=name, manv=card_id, sdt=phone,
-                                diachi=address, ngaysinh=dob, gioitinh=gender)
+                                diachi=address, ngaysinh=normal_date, gioitinh=gender)
             insert_employee(new_shoe)
             messagebox.showinfo("Result", "New employee added")
             # Refresh the table data

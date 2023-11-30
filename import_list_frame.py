@@ -293,10 +293,12 @@ class ImportListFrame(tk.Frame):
                 employees = get_all_employees()
                 employee_dict = {
                     employee.ten: employee.id for employee in employees}
-                self.selected_employee_id = tk.StringVar()
+                # self.selected_employee_id =
                 employee_names = list(employee_dict.keys())
+                selected = tk.StringVar()(add_import_obj_window)
+                selected.set(employee_names[0])
                 employee_combobox = ttk.Combobox(
-                    add_import_obj_window, textvariable=self.selected_employee_id, values=employee_names, state="readonly")
+                    add_import_obj_window, textvariable=selected, values=employee_names, state="readonly")
                 employee_combobox.pack()
             else:
                 # Create an entry field for other attributes
@@ -316,7 +318,7 @@ class ImportListFrame(tk.Frame):
     def add_new_import_obj(self, add_import_obj_window):
         try:
             nhaphang = self.nhaphang_entry.get()
-            id_nhanvien = self.selected_employee_id.get()
+            id_nhanvien = self.employee_combobox.get()
 
             new_import_obj = Imports(
                 manhap=nhaphang, id_nhanvien=id_nhanvien)
