@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Define the database connection URL
 # Replace 'username', 'password', 'hostname', 'database_name' with your MySQL credentials
-DATABASE_URL = 'mysql://root:@localhost/shoes_manager'
+DATABASE_URL = 'mysql://root:ngocnam2210@localhost/shoes_manager'
 
 # Create a SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
@@ -258,6 +258,16 @@ def get_all_imports():
     try:
         imports_data = session.query(
             Imports).where(Imports.status == 1).all()
+        return imports_data
+    finally:
+        session.close()
+
+
+def get_all_import_detail_by_id(import_id):
+    session = get_connection()
+    try:
+        imports_data = session.query(
+            ImportDetails).where(ImportDetails.status == 1).where(ImportDetails.id_nhaphang == import_id).all()
         return imports_data
     finally:
         session.close()

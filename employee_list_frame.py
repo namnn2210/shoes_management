@@ -135,17 +135,21 @@ class EmployeeListFrame(tk.Frame):
         labels = ["Mã NV", "Tên", "SĐT", "Địa chỉ", "Ngày sinh"]
         entries = []
 
-        for label in labels:
+        print('********', shoe_data)
+
+        for index, label in enumerate(labels):
             label_entry = tk.Label(edit_window, text=label + ":")
             label_entry.pack()
             if label == "Ngày sinh":
                 # Use DateEntry widget for Date of Birth
                 dob_entry = DateEntry(edit_window)
-                entry.insert(0, shoe_data[labels.index(label) + 1])
+                # print(label, shoe_data[labels.index(label) + 1])
+                # dob_entry.insert(0, shoe_data[labels.index(label) + 1])
                 dob_entry.pack()
                 entries.append(dob_entry)
             else:
                 entry = tk.Entry(edit_window)
+                print(label, shoe_data[labels.index(label) + 1])
                 entry.insert(0, shoe_data[labels.index(label) + 1])
                 entry.pack()
                 entries.append(entry)
@@ -169,11 +173,10 @@ class EmployeeListFrame(tk.Frame):
         self.phone_entry = entries[2]
         self.address_entry = entries[3]
         self.dob_entry = entries[4]
-        self.gender_entry = gender_combobox.get()
 
         # Create a "Save" button within the button frame
         save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_edited_shoe(
-            shoe_data[0], edit_window))
+            shoe_data[0], edit_window, gender_combobox))
         save_button.pack(side=tk.LEFT)
 
         # Create a "Delete" button within the button frame
@@ -181,7 +184,7 @@ class EmployeeListFrame(tk.Frame):
             button_frame, text="Delete", command=lambda: self.delete_shoe(shoe_data[0], edit_window))
         delete_button.pack(side=tk.LEFT)
 
-    def save_edited_shoe(self, shoe_id, edit_window):
+    def save_edited_shoe(self, shoe_id, edit_window, gender_combobox):
         try:
             card_id = self.card_id_entry.get()
             name = self.name_entry.get()
@@ -193,6 +196,9 @@ class EmployeeListFrame(tk.Frame):
             # Parse the string into a datetime object
             date_obj = datetime.strptime(dob, date_format)
             normal_date = date_obj.strftime('%Y-%m-%d')
+
+            self.gender_entry = gender_combobox.get()
+
             if self.gender_entry == 'Nam':
                 gender = 1
             else:
@@ -262,16 +268,15 @@ class EmployeeListFrame(tk.Frame):
         self.phone_entry = entries[2]
         self.address_entry = entries[3]
         self.dob_entry = entries[4]
-        self.gender_entry = gender_combobox.get()
 
         # print('================================', type(self.dob_entry.get()))
 
         # Create a button to submit the new shoe data
         submit_button = tk.Button(
-            add_shoe_window, text="Thêm", command=lambda: self.add_new_shoe(add_shoe_window))
+            add_shoe_window, text="Thêm", command=lambda: self.add_new_shoe(add_shoe_window, gender_combobox))
         submit_button.pack()
 
-    def add_new_shoe(self, add_shoe_window):
+    def add_new_shoe(self, add_shoe_window, gender_combobox):
         try:
             card_id = self.card_id_entry.get()
             name = self.name_entry.get()
@@ -283,6 +288,9 @@ class EmployeeListFrame(tk.Frame):
             # Parse the string into a datetime object
             date_obj = datetime.strptime(dob, date_format)
             normal_date = date_obj.strftime('%Y-%m-%d')
+
+            self.gender_entry = gender_combobox.get()
+
             if self.gender_entry == 'Nam':
                 gender = 1
             else:

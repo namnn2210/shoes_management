@@ -312,13 +312,13 @@ class ImportListFrame(tk.Frame):
 
         # Create a button to submit the new import_obj data
         submit_button = tk.Button(
-            add_import_obj_window, text="Thêm", command=lambda: self.add_new_import_obj(add_import_obj_window))
+            add_import_obj_window, text="Thêm", command=lambda: self.add_new_import_obj(add_import_obj_window, employee_combobox, employee_dict))
         submit_button.pack()
 
-    def add_new_import_obj(self, add_import_obj_window):
+    def add_new_import_obj(self, add_import_obj_window, employee_combobox, employee_dict):
         try:
             nhaphang = self.nhaphang_entry.get()
-            id_nhanvien = self.employee_combobox.get()
+            id_nhanvien = employee_dict[employee_combobox.get()]
 
             new_import_obj = Imports(
                 manhap=nhaphang, id_nhanvien=id_nhanvien)
