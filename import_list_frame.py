@@ -295,7 +295,7 @@ class ImportListFrame(tk.Frame):
                     employee.ten: employee.id for employee in employees}
                 # self.selected_employee_id =
                 employee_names = list(employee_dict.keys())
-                selected = tk.StringVar()(add_import_obj_window)
+                selected = tk.StringVar(add_import_obj_window)
                 selected.set(employee_names[0])
                 employee_combobox = ttk.Combobox(
                     add_import_obj_window, textvariable=selected, values=employee_names, state="readonly")
